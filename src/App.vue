@@ -1,12 +1,15 @@
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, computed } from 'vue';
 import Post from './components/Post.vue';
+
+const MAX_CHARACTERS = 200;
 
 const message = ref('Hello World!');
 const textInput = ref('');
 const postFilterInput = ref('');
 const filteredPosts = ref([]);
+
 const state = {
   count: ref(0),
   posts: ref([
@@ -24,12 +27,15 @@ const state = {
     be it simple or complex.` },
   ])
 };
+
 const increase = () => {
   state.count.value++;
 }
+
 const decrease = () => {
   state.count.value--;
 }
+
 const filterPostHandler = (e) => {
   if (!e.target.value.trim()) {
     filteredPosts.value = [];
@@ -40,15 +46,27 @@ const filterPostHandler = (e) => {
   }
 }
 
+const lettersCounter = computed(() => {
+  return textInput.value.length;
+});
+
+const limitCharactersHandler = () => {
+  if (textInput.value.length > 200)  {
+   textInput.value = textInput.value.slice(0, 200);
+  }
+};
+
 
 </script>
   
 <template>
   <h1>{{ message }}</h1>
-  <input v-model='textInput' placeholder='Type something here...' />
+  <textarea v-model='textInput' placeholder='Type something here...' @keyup="limitCharactersHandler"></textarea>
   <p>
     Typed text: {{ textInput}}
   </p>
+  <small style="color: #ccc;">{{ lettersCounter }}/{{ MAX_CHARACTERS }}</small>
+  <hr />
   <button @click='increase'>
     Increase
   </button>
